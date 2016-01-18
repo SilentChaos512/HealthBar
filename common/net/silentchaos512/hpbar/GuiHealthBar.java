@@ -82,7 +82,7 @@ public class GuiHealthBar extends Gui {
       GL11.glPushMatrix();
 
       // Quiver when low on health
-      double quiverIntensity = Math.max(Config.barQuiverFraction - healthFraction, 0f)
+      double quiverIntensity = Math.max(Config.barQuiverFraction - healthFraction + 0.01f, 0f)
           * Config.barQuiverIntensity / Config.barQuiverFraction;
       double quiverX = HealthBar.instance.random.nextGaussian() * quiverIntensity;
       double quiverY = HealthBar.instance.random.nextGaussian() * quiverIntensity;
@@ -122,6 +122,12 @@ public class GuiHealthBar extends Gui {
       FontRenderer fontRender = mc.fontRendererObj;
       String format = Config.healthStringFormat;
       String str = String.format(format, currentHealth, maxHealth);
+      // Add padding if current health has fewer digits than max.
+      int extraSpaces = String.format("%.1f", maxHealth).length()
+          - String.format("%.1f", currentHealth).length();
+      for (int i = 0; i < extraSpaces; ++i) {
+        str = " " + str;
+      }
       final int stringWidth = fontRender.getStringWidth(str);
 
       if (replaceVanilla) {
