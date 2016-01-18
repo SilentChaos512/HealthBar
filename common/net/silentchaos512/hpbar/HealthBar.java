@@ -5,6 +5,7 @@ import java.util.Random;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -13,13 +14,15 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = HealthBar.MOD_ID, name = HealthBar.MOD_NAME, version = HealthBar.VERSION_NUMBER)
+@Mod(modid = HealthBar.MOD_ID, name = HealthBar.MOD_NAME, version = HealthBar.VERSION_NUMBER, guiFactory = "net.silentchaos512.hpbar.GuiFactoryHealthBar")
 public class HealthBar {
 
   public static final String MOD_ID = "HealthBar";

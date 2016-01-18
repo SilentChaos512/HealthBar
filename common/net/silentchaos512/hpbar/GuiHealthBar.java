@@ -30,10 +30,6 @@ public class GuiHealthBar extends Gui {
     this.mc = mc;
   }
 
-  public static final float OFFSET_Y = Config.yOffset;
-  public static final int BAR_WIDTH = Config.barWidth;
-  public static final int BAR_HEIGHT = Config.barHeight;
-
   @SubscribeEvent
   public void onRenderGameOverlay(RenderGameOverlayEvent event) {
 
@@ -42,24 +38,29 @@ public class GuiHealthBar extends Gui {
       event.setCanceled(true);
     }
 
+    // Only render on TEXT (seems to cause problems in other cases).
     if (event.isCancelable() || event.type != ElementType.TEXT) {
       return;
     }
-
-    ScaledResolution res = new ScaledResolution(mc);
-    EntityPlayer player = mc.thePlayer;
 
     float currentHealth = HealthBar.instance.getPlayerHealth();
     float maxHealth = HealthBar.instance.getPlayerMaxHealth();
     float healthFraction = currentHealth / maxHealth;
 
-    int posX, posY;
-    float scale;
-
     // Hide at full health
     if (healthFraction >= 1f && !Config.barShowAlways) {
       return;
     }
+
+    ScaledResolution res = new ScaledResolution(mc);
+
+    int posX, posY;
+    float scale;
+
+    final int barWidth = Config.barWidth;
+    final int barHeight = Config.barHeight;
+    final float xOffset = Config.xOffset;
+    final float yOffset = Config.yOffset;
 
     /*
      * Render a health bar
@@ -79,18 +80,18 @@ public class GuiHealthBar extends Gui {
       double quiverX = HealthBar.instance.random.nextGaussian() * quiverIntensity;
       double quiverY = HealthBar.instance.random.nextGaussian() * quiverIntensity;
 
-      posX = (int) (res.getScaledWidth() / scale / 2 - BAR_WIDTH / 2 + quiverX);
-      posY = (int) (res.getScaledHeight() / scale * OFFSET_Y + quiverY);
+      posX = (int) (res.getScaledWidth() / scale * xOffset - barWidth / 2 + quiverX);
+      posY = (int) (res.getScaledHeight() / scale * yOffset + quiverY);
 
       // Health bar
       mc.renderEngine.bindTexture(TEXTURE_BAR);
-      float barPosWidth = BAR_WIDTH * healthFraction;
-      float barPosX = posX + BAR_WIDTH * (1f - healthFraction) / 2;
-      drawRect(barPosX, posY, 0, 0, barPosWidth, BAR_HEIGHT);
+      float barPosWidth = barWidth * healthFraction;
+      float barPosX = posX + barWidth * (1f - healthFraction) / 2;
+      drawRect(barPosX, posY, 0, 0, barPosWidth, barHeight);
 
       // Bar frame
       mc.renderEngine.bindTexture(TEXTURE_FRAME);
-      drawRect(posX, posY, 0, 0, BAR_WIDTH, BAR_HEIGHT);
+      drawRect(posX, posY, 0, 0, barWidth, barHeight);
 
       GL11.glEnable(GL11.GL_BLEND);
       GL11.glPopMatrix();
@@ -109,8 +110,8 @@ public class GuiHealthBar extends Gui {
       String format = Config.healthStringFormat;
       String str = String.format(format, currentHealth, maxHealth);
 
-      posX = (int) (res.getScaledWidth() / scale / 2 - fontRender.getStringWidth(str) / 2);
-      posY = (int) (res.getScaledHeight() / scale * OFFSET_Y - 2) - BAR_HEIGHT;
+      posX = (int) (res.getScaledWidth() / scale * xOffset - fontRender.getStringWidth(str) / 2);
+      posY = (int) (res.getScaledHeight() / scale * yOffset - 2) - barHeight;
       fontRender.drawStringWithShadow(str, posX, posY, 0xFFFFFF);
 
       GL11.glPopMatrix();

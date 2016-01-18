@@ -1,0 +1,11 @@
+[
+{
+  "modid": "HealthBar",
+  "name": "Health Bar",
+  "description": "A simple, accurate health bar!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "authors": [ "SilentChaos512" ]
+}
+]

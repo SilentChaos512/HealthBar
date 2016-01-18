@@ -3,6 +3,7 @@ package net.silentchaos512.hpbar;
 import java.io.File;
 import java.util.IllegalFormatException;
 
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 
 public class Config {
@@ -22,6 +23,7 @@ public class Config {
   public static int checkinFrequency = 300;
 
   private static Configuration c;
+  public static File configFile;
 
   private static final String sep = Configuration.CATEGORY_SPLITTER;
   public static final String CAT_BAR = "health_bar";
@@ -32,6 +34,7 @@ public class Config {
 
   public static void init(File file) {
 
+    configFile = file;
     c = new Configuration(file);
 
     //@formatter:off
@@ -120,5 +123,15 @@ public class Config {
     if (c.hasChanged()) {
       c.save();
     }
+  }
+
+  public static ConfigCategory getCategory(String str) {
+
+    return c.getCategory(str);
+  }
+
+  public static Configuration getConfiguration() {
+
+    return c;
   }
 }
