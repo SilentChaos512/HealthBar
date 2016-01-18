@@ -16,7 +16,7 @@ public class Config {
   public static int barHeight = 8;
   public static float barScale = 1.0f;
   public static boolean barShowAlways = false;
-  public static boolean hideVanillaHealth = false;
+  public static boolean replaceVanillaHealth = false;
   public static float barOpacity = 0.6f;
   public static float barQuiverFraction = 0.25f;
   public static float barQuiverIntensity = 1.0f;
@@ -36,6 +36,10 @@ public class Config {
 
     configFile = file;
     c = new Configuration(file);
+    load();
+  }
+
+  public static void load() {
 
     //@formatter:off
 
@@ -76,10 +80,10 @@ public class Config {
         "Opacity", CAT_BAR_RENDER,
         barOpacity, 0f, 1f,
         "The opacity of the health bar.");
-    hideVanillaHealth = c.getBoolean(
-        "HideVanillaHealth", CAT_BAR_RENDER,
-        hideVanillaHealth,
-        "Hides vanilla hearts.");
+    replaceVanillaHealth = c.getBoolean(
+        "ReplaceVanillaHealth", CAT_BAR_RENDER,
+        replaceVanillaHealth,
+        "Hides vanilla hearts and places the bar in their place. Ignores some position configs if true.");
 
     barQuiverFraction = c.getFloat(
         "QuiverFraction", CAT_BAR_RENDER,
