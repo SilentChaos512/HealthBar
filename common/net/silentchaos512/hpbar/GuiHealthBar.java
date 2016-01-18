@@ -55,7 +55,7 @@ public class GuiHealthBar extends Gui {
     float healthFraction = currentHealth / maxHealth;
 
     // Hide at full health
-    if (healthFraction >= 1f && !Config.barShowAlways) {
+    if (healthFraction >= 1f && !Config.barShowAlways && !Config.replaceVanillaHealth) {
       return;
     }
 
@@ -80,7 +80,6 @@ public class GuiHealthBar extends Gui {
     scale = Config.barScale;
     if (scale > 0f) {
       GL11.glPushMatrix();
-      GL11.glScalef(scale, scale, 1);
 
       // Quiver when low on health
       double quiverIntensity = Math.max(Config.barQuiverFraction - healthFraction, 0f)
@@ -94,6 +93,7 @@ public class GuiHealthBar extends Gui {
       } else {
         posX = (int) (res.getScaledWidth() / scale * xOffset - barWidth / 2 + quiverX);
         posY = (int) (res.getScaledHeight() / scale * yOffset + quiverY);
+        GL11.glScalef(scale, scale, 1);
       }
 
       // Health bar
