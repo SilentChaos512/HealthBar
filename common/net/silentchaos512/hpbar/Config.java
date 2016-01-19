@@ -20,6 +20,7 @@ public class Config {
   public static float barOpacity = 0.6f;
   public static float barQuiverFraction = 0.25f;
   public static float barQuiverIntensity = 1.0f;
+  public static String barJustification = "CENTER";
   public static int checkinFrequency = 300;
 
   private static Configuration c;
@@ -83,7 +84,14 @@ public class Config {
     replaceVanillaHealth = c.getBoolean(
         "ReplaceVanillaHealth", CAT_BAR_RENDER,
         replaceVanillaHealth,
-        "Hides vanilla hearts and places the bar in their place. Ignores some position configs if true.");
+        "Hides vanilla hearts and places the bar in their place. Ignores some configs if true.");
+    barJustification = c.getString(
+        "Justification", CAT_BAR_RENDER,
+        barJustification,
+        "Where the health bar is rendered in the frame. CENTER means there will be equal amounts of "
+            + "empty space to the left and right. LEFT and RIGHT mean all empty space is to the right "
+            + "or left, respectively.",
+        new String[] { "CENTER", "LEFT", "RIGHT" });
 
     barQuiverFraction = c.getFloat(
         "QuiverFraction", CAT_BAR_RENDER,

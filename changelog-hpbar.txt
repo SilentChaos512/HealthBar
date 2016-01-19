@@ -1,0 +1,3 @@
+Added: A config GUI! Change config options through the mods menu, without restarting your game! (In 1.7.10, you must be on the main menu, not in a world.)
+Added: Config to replace vanilla health. The bar will be positioned and sized appropriately, ignoring related configs. No need to enable ShowAlways, but it won't hurt anything.
+Changed: Quiver (shaking on low health) now changes the scale of the health bar a bit as well.

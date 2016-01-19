@@ -101,7 +101,12 @@ public class GuiHealthBar extends Gui {
       // Health bar
       mc.renderEngine.bindTexture(TEXTURE_BAR);
       float barPosWidth = barWidth * healthFraction;
-      float barPosX = posX + barWidth * (1f - healthFraction) / 2;
+      float barPosX = posX;
+      if (Config.barJustification.equals("CENTER")) {
+        barPosX += barWidth * (1f - healthFraction) / 2;
+      } else if (Config.barJustification.equals("RIGHT")) {
+        barPosX += barWidth * (1f - healthFraction);
+      }
       drawRect(barPosX, posY, 0, 0, barPosWidth, barHeight);
 
       // Bar frame
