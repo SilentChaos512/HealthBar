@@ -86,6 +86,8 @@ public class GuiHealthBar extends Gui {
           * Config.barQuiverIntensity / Config.barQuiverFraction;
       double quiverX = HealthBar.instance.random.nextGaussian() * quiverIntensity;
       double quiverY = HealthBar.instance.random.nextGaussian() * quiverIntensity;
+      double quiverScale = HealthBar.instance.random.nextGaussian() * quiverIntensity * 0.05 + 1.0;
+      scale *= quiverScale;
 
       if (replaceVanilla) {
         posX = (int) (res.getScaledWidth() / 2 - 91 + quiverX);
