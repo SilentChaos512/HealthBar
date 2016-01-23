@@ -1,9 +1,11 @@
-package net.silentchaos512.hpbar;
+package net.silentchaos512.hpbar.gui;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.fml.client.config.GuiConfig;
+import net.silentchaos512.hpbar.HealthBar;
+import net.silentchaos512.hpbar.config.Config;
 
 public class GuiConfigHealthBar extends GuiConfig {
 

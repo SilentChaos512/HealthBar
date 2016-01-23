@@ -1,4 +1,4 @@
-package net.silentchaos512.hpbar;
+package net.silentchaos512.hpbar.gui;
 
 import org.lwjgl.opengl.GL11;
 
@@ -15,6 +15,8 @@ import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.silentchaos512.hpbar.HealthBar;
+import net.silentchaos512.hpbar.config.Config;
 
 public class GuiHealthBar extends Gui {
 

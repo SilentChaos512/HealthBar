@@ -1,4 +1,4 @@
-package net.silentchaos512.hpbar;
+package net.silentchaos512.hpbar.config;
 
 import java.io.File;
 import java.util.IllegalFormatException;

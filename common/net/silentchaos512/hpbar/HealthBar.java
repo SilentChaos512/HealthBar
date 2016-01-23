@@ -19,6 +19,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import net.silentchaos512.hpbar.config.Config;
+import net.silentchaos512.hpbar.gui.GuiHealthBar;
+import net.silentchaos512.hpbar.network.MessageHealthUpdate;
 
 @Mod(modid = HealthBar.MOD_ID, name = HealthBar.MOD_NAME, version = HealthBar.VERSION_NUMBER, guiFactory = "net.silentchaos512.hpbar.GuiFactoryHealthBar")
 public class HealthBar {

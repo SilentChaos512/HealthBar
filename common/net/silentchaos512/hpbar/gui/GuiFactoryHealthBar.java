@@ -1,4 +1,4 @@
-package net.silentchaos512.hpbar;
+package net.silentchaos512.hpbar.gui;
 
 import java.util.Set;
 

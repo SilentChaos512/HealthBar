@@ -1,10 +1,11 @@
-package net.silentchaos512.hpbar;
+package net.silentchaos512.hpbar.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
+import net.silentchaos512.hpbar.HealthBar;
 
 public class MessageHealthUpdate implements IMessage {
 

@@ -16,7 +16,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //    id "net.minecraftforge.gradle.forge" version "2.0.2"
 //}
 
-version = "1.0.0"
+version = "1.0.1"
 group = "net.silentchaos512.hpbar"
 archivesBaseName = "HealthBar-1.8.9"
 
