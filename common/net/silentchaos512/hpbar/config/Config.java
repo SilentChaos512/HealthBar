@@ -22,6 +22,7 @@ public class Config {
   public static float barQuiverIntensity = 1.0f;
   public static String barJustification = "CENTER";
   public static int checkinFrequency = 300;
+  public static Color colorHealthBar = new Color(1f, 0f, 0f);
 
   private static Configuration c;
   public static File configFile;

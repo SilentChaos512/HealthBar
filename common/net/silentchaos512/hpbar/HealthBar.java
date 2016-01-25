@@ -23,7 +23,7 @@ import net.silentchaos512.hpbar.config.Config;
 import net.silentchaos512.hpbar.gui.GuiHealthBar;
 import net.silentchaos512.hpbar.network.MessageHealthUpdate;
 
-@Mod(modid = HealthBar.MOD_ID, name = HealthBar.MOD_NAME, version = HealthBar.VERSION_NUMBER, guiFactory = "net.silentchaos512.hpbar.GuiFactoryHealthBar")
+@Mod(modid = HealthBar.MOD_ID, name = HealthBar.MOD_NAME, version = HealthBar.VERSION_NUMBER, guiFactory = "net.silentchaos512.hpbar.gui.GuiFactoryHealthBar")
 public class HealthBar {
 
   public static final String MOD_ID = "HealthBar";
@@ -61,7 +61,9 @@ public class HealthBar {
   @EventHandler
   public void postInit(FMLPostInitializationEvent event) {
 
-    MinecraftForge.EVENT_BUS.register(new GuiHealthBar(Minecraft.getMinecraft()));
+    if (event.getSide() == Side.CLIENT) {
+      MinecraftForge.EVENT_BUS.register(new GuiHealthBar(Minecraft.getMinecraft()));
+    }
   }
 
   @SubscribeEvent

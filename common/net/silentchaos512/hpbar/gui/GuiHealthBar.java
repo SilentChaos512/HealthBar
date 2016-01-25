@@ -9,13 +9,13 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.silentchaos512.hpbar.HealthBar;
+import net.silentchaos512.hpbar.config.Color;
 import net.silentchaos512.hpbar.config.Config;
 
 public class GuiHealthBar extends Gui {
@@ -75,7 +75,6 @@ public class GuiHealthBar extends Gui {
     /*
      * Render a health bar
      */
-    GL11.glColor4f(1f, 1f, 1f, Config.barOpacity);
     GL11.glDisable(GL11.GL_LIGHTING);
     GL11.glEnable(GL11.GL_BLEND);
 
@@ -101,19 +100,9 @@ public class GuiHealthBar extends Gui {
       }
 
       // Health bar
-      mc.renderEngine.bindTexture(TEXTURE_BAR);
-      float barPosWidth = barWidth * healthFraction;
-      float barPosX = posX;
-      if (Config.barJustification.equals("CENTER")) {
-        barPosX += barWidth * (1f - healthFraction) / 2;
-      } else if (Config.barJustification.equals("RIGHT")) {
-        barPosX += barWidth * (1f - healthFraction);
-      }
-      drawRect(barPosX, posY, 0, 0, barPosWidth, barHeight);
-
+      drawBar(posX, posY, barWidth, barHeight, Config.colorHealthBar, healthFraction);
       // Bar frame
-      mc.renderEngine.bindTexture(TEXTURE_FRAME);
-      drawRect(posX, posY, 0, 0, barWidth, barHeight);
+      drawBarFrame(posX, posY, barWidth, barHeight);
 
       GL11.glEnable(GL11.GL_BLEND);
       GL11.glPopMatrix();
@@ -156,6 +145,57 @@ public class GuiHealthBar extends Gui {
 
       GL11.glPopMatrix();
     }
+
+    /*
+     * FOOD BAR TEST
+     */
+
+//    posX = 5;
+//    posY = 5;
+//    scale = 1f;
+//
+//    int currentFood = mc.thePlayer.getFoodStats().getFoodLevel();
+//    int maxFood = 20;
+//    float currentSaturation = mc.thePlayer.getFoodStats().getSaturationLevel();
+//    float maxSaturation = currentFood;
+//
+//    GL11.glPushMatrix();
+//    drawBar(posX, posY, barWidth, barHeight, new Color(1f, 0.5f, 0f), (float) currentFood / maxFood);
+//    drawBar(posX, posY + 3f / 4f * barHeight, barWidth, barHeight / 4f, new Color(1f, 0f, 1f), currentSaturation / maxSaturation);
+//    drawBarFrame(posX, posY, barWidth, barHeight);
+//    FontRenderer fontRender = mc.fontRendererObj;
+//    String test = "%d (%.1f)";
+//    test = String.format(test, currentFood, currentSaturation);
+//    fontRender.drawStringWithShadow(test, posX, posY + barHeight, 0xFFFFFF);
+//    GL11.glPopMatrix();
+
+    //renderFoodBar(event);
+  }
+
+  protected void renderFoodBar(RenderGameOverlayEvent event) {
+
+    
+  }
+
+  protected void drawBar(float x, float y, float width, float height, Color color, float fraction) {
+
+    mc.renderEngine.bindTexture(TEXTURE_BAR);
+    GL11.glColor4f(color.red, color.green, color.blue, Config.barOpacity);
+    float barPosWidth = width * fraction;
+    float barPosX = x;
+    if (Config.barJustification.equals("CENTER")) {
+      barPosX += width * (1f - fraction) / 2;
+    } else if (Config.barJustification.equals("RIGHT")) {
+      barPosX += width * (1f - fraction);
+    }
+    drawRect(barPosX, y, 0, 0, barPosWidth, height);
+  }
+
+  protected void drawBarFrame(float x, float y, float width, float height) {
+
+    mc.renderEngine.bindTexture(TEXTURE_FRAME);
+    GL11.glColor4f(1f, 1f, 1f, Config.barOpacity);
+    drawRect(x, y, 0, 0, width, height);
   }
 
   public void drawRect(float x, float y, float u, float v, float width, float height) {
