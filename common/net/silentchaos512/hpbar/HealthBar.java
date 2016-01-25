@@ -23,7 +23,13 @@ import net.silentchaos512.hpbar.config.Config;
 import net.silentchaos512.hpbar.gui.GuiHealthBar;
 import net.silentchaos512.hpbar.network.MessageHealthUpdate;
 
-@Mod(modid = HealthBar.MOD_ID, name = HealthBar.MOD_NAME, version = HealthBar.VERSION_NUMBER, guiFactory = "net.silentchaos512.hpbar.gui.GuiFactoryHealthBar")
+//@formatter:off
+@Mod(modid = HealthBar.MOD_ID,
+    name = HealthBar.MOD_NAME,
+    version = HealthBar.VERSION_NUMBER,
+    guiFactory = "net.silentchaos512.hpbar.gui.GuiFactoryHealthBar",
+    updateJSON = "https://raw.githubusercontent.com/SilentChaos512/HealthBar/master/update.json")
+//@formatter:on
 public class HealthBar {
 
   public static final String MOD_ID = "HealthBar";
