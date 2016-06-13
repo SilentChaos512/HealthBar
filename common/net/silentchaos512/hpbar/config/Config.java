@@ -9,6 +9,8 @@ import net.minecraftforge.common.config.Configuration;
 public class Config {
 
   public static String healthStringFormat = "%.1f / %.1f";
+  public static String damageStringFormat = "(%.3f)";
+  public static boolean showLastDamageTaken = false;
   public static float textScale = 0.8f;
   public static float xOffset = 0.5f;
   public static float yOffset = 0.75f;
@@ -32,6 +34,7 @@ public class Config {
   public static final String CAT_BAR_POSITION = CAT_BAR + sep + "position";
   public static final String CAT_BAR_RENDER = CAT_BAR + sep + "render";
   public static final String CAT_BAR_SIZE = CAT_BAR + sep + "size";
+  public static final String CAT_BAR_TEXT = CAT_BAR + sep + "text";
   public static final String CAT_NETWORK = "network";
 
   public static void init(File file) {
@@ -46,6 +49,14 @@ public class Config {
     //@formatter:off
 
     healthStringFormat = loadFormatString();
+    damageStringFormat = c.getString(
+        "DamageStringFormat", CAT_BAR_TEXT,
+        damageStringFormat,
+        "Format string for last damage taken.");
+    showLastDamageTaken = c.getBoolean(
+        "ShowLastDamageTaken", CAT_BAR_TEXT,
+        showLastDamageTaken,
+        "Shows the last amount of damage the player took.");
     textScale = c.getFloat(
         "TextScale", CAT_BAR_RENDER,
         textScale, 0f, Float.MAX_VALUE,
@@ -115,10 +126,10 @@ public class Config {
 
   private static String loadFormatString() {
 
-    String str = c.getString("HealthStringFormat", "health_bar.text", healthStringFormat,
+    String str = c.getString("HealthStringFormat", CAT_BAR_TEXT, healthStringFormat,
         "The format string the player's current and maximum health are passed through.\n"
             + "To show only the integer part of your health, try '%.0f / %.0f'.\n"
-            + "Note there needs to be exactly two format codes, or the mod will use the default!"
+            + "You need not use two format codes. Using one will show your current health only.\n"
             + "https://docs.oracle.com/javase/tutorial/java/data/numberformat.html");
     try {
       // Try the loaded string to make sure it works.

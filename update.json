@@ -1,10 +1,15 @@
 {
   "homepage": "http://minecraft.curseforge.com/projects/health-bar/files",
   "promos": {
+    "1.9-latest": "1.0.2",
+    "1.9-recommended": "1.0.2",
     "1.8.9-latest": "1.0.2",
     "1.8.9-recommended": "1.0.2"
   },
+  "1.9": {
+    "1.0.2": "Port to 1.9"
+  },
   "1.8.9": {
-    "1.0.2": "Fixed server crash"
+    "1.0.2": "Fixed server crash\nAdded update checker"
   }
 }

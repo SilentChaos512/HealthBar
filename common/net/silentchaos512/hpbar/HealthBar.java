@@ -42,6 +42,7 @@ public class HealthBar {
   private float playerMaxHealth = 20f;
   private float playerPrevCurrentHealth = 20f;
   private float playerPrevMaxHealth = 20f;
+  private float playerLastDamageTaken = 0f;
 
   @Instance(MOD_ID)
   public static HealthBar instance;
@@ -61,7 +62,7 @@ public class HealthBar {
     network.registerMessage(MessageHealthUpdate.Handler.class, MessageHealthUpdate.class,
         discriminator, Side.CLIENT);
 
-    FMLCommonHandler.instance().bus().register(this);
+    MinecraftForge.EVENT_BUS.register(this);
   }
 
   @EventHandler
@@ -75,7 +76,7 @@ public class HealthBar {
   @SubscribeEvent
   public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
 
-    if (event.modID.equals(MOD_ID)) {
+    if (event.getModID().equals(MOD_ID)) {
       Config.load();
       Config.save();
     }
@@ -84,9 +85,9 @@ public class HealthBar {
   @SubscribeEvent
   public void onEntityConstructing(EntityConstructing event) {
 
-    if (event.entity instanceof EntityPlayerMP) {
-      EntityPlayerMP player = (EntityPlayerMP) event.entity;
-      if (player.getEntityAttribute(SharedMonsterAttributes.maxHealth) != null) {
+    if (event.getEntity() instanceof EntityPlayerMP) {
+      EntityPlayerMP player = (EntityPlayerMP) event.getEntity();
+      if (player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH) != null) {
         float current = player.getHealth();
         float max = player.getMaxHealth();
         network.sendTo(new MessageHealthUpdate(current, max), player);
@@ -106,7 +107,11 @@ public class HealthBar {
       boolean checkInTime = Config.checkinFrequency <= 0 ? false
           : event.player.worldObj.getTotalWorldTime() % Config.checkinFrequency == 0;
       if (healthChanged || checkInTime) {
-        // System.out.println("Sending player health update...");
+        // Calculate health change, save the number if damage was taken.
+        float diff = current - playerPrevCurrentHealth;
+        if (diff < 0)
+          playerLastDamageTaken = -diff;
+
         network.sendTo(new MessageHealthUpdate(current, max), (EntityPlayerMP) event.player);
       }
     }
@@ -132,5 +137,10 @@ public class HealthBar {
 
     playerPrevMaxHealth = playerMaxHealth;
     playerMaxHealth = value;
+  }
+
+  public float getPlayerLastDamageTaken() {
+
+    return playerLastDamageTaken;
   }
 }

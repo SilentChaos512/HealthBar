@@ -7,7 +7,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.GuiIngameForge;
@@ -37,13 +37,13 @@ public class GuiHealthBar extends Gui {
   public void onRenderGameOverlay(RenderGameOverlayEvent event) {
 
     // Hide vanilla health?
-    if (Config.replaceVanillaHealth && event.isCancelable() && event.type == ElementType.HEALTH) {
+    if (Config.replaceVanillaHealth && event.isCancelable() && event.getType() == ElementType.HEALTH) {
       event.setCanceled(true);
       GuiIngameForge.left_height += 10;
     }
 
     // Only render on TEXT (seems to cause problems in other cases).
-    if (event.isCancelable() || event.type != ElementType.TEXT) {
+    if (event.isCancelable() || event.getType() != ElementType.TEXT) {
       return;
     }
 
@@ -54,6 +54,7 @@ public class GuiHealthBar extends Gui {
 
     float currentHealth = HealthBar.instance.getPlayerHealth();
     float maxHealth = HealthBar.instance.getPlayerMaxHealth();
+    float lastDamage = HealthBar.instance.getPlayerLastDamageTaken();
     float healthFraction = currentHealth / maxHealth;
 
     // Hide at full health
@@ -126,7 +127,7 @@ public class GuiHealthBar extends Gui {
       for (int i = 0; i < extraSpaces; ++i) {
         str = " " + str;
       }
-      final int stringWidth = fontRender.getStringWidth(str);
+      int stringWidth = fontRender.getStringWidth(str);
 
       if (replaceVanilla) {
         final float paddingX = (barWidth - stringWidth * scale) / 2f;
@@ -141,6 +142,14 @@ public class GuiHealthBar extends Gui {
         posY = (int) (res.getScaledHeight() / scale * yOffset - 2) - barHeight;
         GL11.glScalef(scale, scale, 1);
         fontRender.drawStringWithShadow(str, posX, posY, 0xFFFFFF);
+        // Last damage taken?
+        if (Config.showLastDamageTaken) {
+          str = String.format(Config.damageStringFormat, lastDamage);
+          stringWidth = fontRender.getStringWidth(str);
+          posX = (int) (res.getScaledWidth() / scale * xOffset - stringWidth / 2);
+          posY = (int) (res.getScaledHeight() / scale * yOffset - 5 - fontRender.FONT_HEIGHT) - barHeight;
+          fontRender.drawStringWithShadow(str, posX, posY, 0xFF4444);
+        }
       }
 
       GL11.glPopMatrix();
@@ -201,12 +210,12 @@ public class GuiHealthBar extends Gui {
   public void drawRect(float x, float y, float u, float v, float width, float height) {
 
     Tessellator tess = Tessellator.getInstance();
-    WorldRenderer worldRender = tess.getWorldRenderer();
-    worldRender.begin(7, DefaultVertexFormats.POSITION_TEX);
-    worldRender.pos(x, y + height, 0).tex(0, 1).endVertex();
-    worldRender.pos(x + width, y + height, 0).tex(1, 1).endVertex();
-    worldRender.pos(x + width, y, 0).tex(1, 0).endVertex();
-    worldRender.pos(x, y, 0).tex(0, 0).endVertex();
+    VertexBuffer buff = tess.getBuffer();
+    buff.begin(7, DefaultVertexFormats.POSITION_TEX);
+    buff.pos(x, y + height, 0).tex(0, 1).endVertex();
+    buff.pos(x + width, y + height, 0).tex(1, 1).endVertex();
+    buff.pos(x + width, y, 0).tex(1, 0).endVertex();
+    buff.pos(x, y, 0).tex(0, 0).endVertex();
     tess.draw();
   }
 }

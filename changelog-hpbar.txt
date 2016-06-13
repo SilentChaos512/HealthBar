@@ -1,3 +1,10 @@
+1.0.4
+Added: Config to show last damage taken.
+
+1.0.2
+Added: Update checker
+Fixed: A server-side crash
+
 1.0.1
 Added: A config GUI! Change config options through the mods menu, without restarting your game! (In 1.7.10, you must be on the main menu, not in a world.)
 Added: Config to replace vanilla health. The bar will be positioned and sized appropriately, ignoring related configs. No need to enable ShowAlways, but it won't hurt anything.
