@@ -154,8 +154,10 @@ public class HealthBar {
 
   public void handleUpdatePacket(float health, float maxHealth) {
 
-    this.playerCurrentHealth = health;
-    this.playerMaxHealth = maxHealth;
-    this.lastUpdatePacketTime = System.currentTimeMillis();
+    playerPrevCurrentHealth = playerCurrentHealth;
+    playerPrevMaxHealth = playerMaxHealth;
+    playerCurrentHealth = health;
+    playerMaxHealth = maxHealth;
+    lastUpdatePacketTime = System.currentTimeMillis();
   }
 }
