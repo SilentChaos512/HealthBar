@@ -41,16 +41,8 @@ public class MessageHealthUpdate implements IMessage {
     @Override
     public IMessage onMessage(MessageHealthUpdate message, MessageContext ctx) {
 
-      if (ctx.side == Side.CLIENT) {
-        HealthBar.instance.setPlayerHealth(message.currentHealth);
-        HealthBar.instance.setPlayerMaxHealth(message.maxHealth);
-
-        // Fix the player's health.
-//        EntityPlayer player = Minecraft.getMinecraft().thePlayer;
-//        player.getEntityAttribute(SharedMonsterAttributes.maxHealth)
-//            .setBaseValue(message.maxHealth);
-//        player.setHealth(message.currentHealth);
-      }
+      if (ctx.side == Side.CLIENT)
+        HealthBar.instance.handleUpdatePacket(message.currentHealth, message.maxHealth);
       return null;
     }
   }

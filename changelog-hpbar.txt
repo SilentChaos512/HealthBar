@@ -1,5 +1,6 @@
 1.0.4
 Added: Config to show last damage taken.
+Fixed: Mod not working at all if not on server-side.
 
 1.0.2
 Added: Update checker

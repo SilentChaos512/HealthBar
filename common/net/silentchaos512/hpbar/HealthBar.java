@@ -4,6 +4,7 @@ import java.util.Random;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -22,6 +24,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.silentchaos512.hpbar.config.Config;
 import net.silentchaos512.hpbar.gui.GuiHealthBar;
 import net.silentchaos512.hpbar.network.MessageHealthUpdate;
+import net.silentchaos512.hpbar.proxy.HealthBarCommonProxy;
 
 //@formatter:off
 @Mod(modid = HealthBar.MOD_ID,
@@ -38,14 +41,20 @@ public class HealthBar {
   public static final String CHANNEL_NAME = MOD_ID;
   public static final String RESOURCE_PREFIX = MOD_ID.toLowerCase();
 
+  public static final float CLIENT_MODE_DELAY = 5000;
+
   private float playerCurrentHealth = 20f;
   private float playerMaxHealth = 20f;
   private float playerPrevCurrentHealth = 20f;
   private float playerPrevMaxHealth = 20f;
   private float playerLastDamageTaken = 0f;
+  private long lastUpdatePacketTime = 0L;
 
   @Instance(MOD_ID)
   public static HealthBar instance;
+
+  @SidedProxy(clientSide = "net.silentchaos512.hpbar.proxy.HealthBarClientProxy", serverSide = "net.silentchaos512.hpbar.proxy.HealthBarClientProxy")
+  public static HealthBarCommonProxy proxy;
 
   public static SimpleNetworkWrapper network;
 
@@ -119,28 +128,34 @@ public class HealthBar {
 
   public float getPlayerHealth() {
 
+    if (System.currentTimeMillis() - lastUpdatePacketTime > CLIENT_MODE_DELAY) {
+      EntityPlayer clientPlayer = proxy.getClientPlayer();
+      if (clientPlayer != null)
+        return clientPlayer.getHealth();
+    }
+
     return playerCurrentHealth;
-  }
-
-  public void setPlayerHealth(float value) {
-
-    playerPrevCurrentHealth = playerCurrentHealth;
-    playerCurrentHealth = value;
   }
 
   public float getPlayerMaxHealth() {
 
+    if (System.currentTimeMillis() - lastUpdatePacketTime > CLIENT_MODE_DELAY) {
+      EntityPlayer clientPlayer = proxy.getClientPlayer();
+      if (clientPlayer != null)
+        return clientPlayer.getMaxHealth();
+    }
     return playerMaxHealth;
-  }
-
-  public void setPlayerMaxHealth(float value) {
-
-    playerPrevMaxHealth = playerMaxHealth;
-    playerMaxHealth = value;
   }
 
   public float getPlayerLastDamageTaken() {
 
     return playerLastDamageTaken;
+  }
+
+  public void handleUpdatePacket(float health, float maxHealth) {
+
+    this.playerCurrentHealth = health;
+    this.playerMaxHealth = maxHealth;
+    this.lastUpdatePacketTime = System.currentTimeMillis();
   }
 }
