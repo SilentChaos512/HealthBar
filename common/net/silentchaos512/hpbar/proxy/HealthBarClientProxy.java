@@ -1,8 +1,7 @@
 package net.silentchaos512.hpbar.proxy;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class HealthBarClientProxy extends HealthBarCommonProxy {
 

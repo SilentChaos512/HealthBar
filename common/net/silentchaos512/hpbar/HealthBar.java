@@ -9,7 +9,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -53,7 +52,7 @@ public class HealthBar {
   @Instance(MOD_ID)
   public static HealthBar instance;
 
-  @SidedProxy(clientSide = "net.silentchaos512.hpbar.proxy.HealthBarClientProxy", serverSide = "net.silentchaos512.hpbar.proxy.HealthBarClientProxy")
+  @SidedProxy(clientSide = "net.silentchaos512.hpbar.proxy.HealthBarClientProxy", serverSide = "net.silentchaos512.hpbar.proxy.HealthBarCommonProxy")
   public static HealthBarCommonProxy proxy;
 
   public static SimpleNetworkWrapper network;
