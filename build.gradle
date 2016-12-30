@@ -21,7 +21,7 @@ group = "net.silentchaos512.hpbar"
 archivesBaseName = "HealthBar-1.11"
 
 minecraft {
-    version = "1.11-13.19.0.2156"
+    version = "1.11-13.19.1.2189"
     runDir = "eclipse"
 
     replace "@VERSION@", project.version

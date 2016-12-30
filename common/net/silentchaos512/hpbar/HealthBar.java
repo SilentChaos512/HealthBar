@@ -34,7 +34,7 @@ import net.silentchaos512.hpbar.proxy.HealthBarCommonProxy;
 //@formatter:on
 public class HealthBar {
 
-  public static final String MOD_ID = "HealthBar";
+  public static final String MOD_ID = "healthbar";
   public static final String MOD_NAME = "Health Bar";
   public static final String VERSION_NUMBER = "@VERSION@";
   public static final String CHANNEL_NAME = MOD_ID;
