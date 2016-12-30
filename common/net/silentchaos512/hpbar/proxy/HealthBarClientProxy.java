@@ -8,6 +8,6 @@ public class HealthBarClientProxy extends HealthBarCommonProxy {
   @Override
   public EntityPlayer getClientPlayer() {
 
-    return Minecraft.getMinecraft().thePlayer;
+    return Minecraft.getMinecraft().player;
   }
 }

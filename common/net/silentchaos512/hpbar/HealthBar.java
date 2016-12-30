@@ -113,7 +113,7 @@ public class HealthBar {
 
       boolean healthChanged = current != playerPrevCurrentHealth || max != playerPrevMaxHealth;
       boolean checkInTime = Config.checkinFrequency <= 0 ? false
-          : event.player.worldObj.getTotalWorldTime() % Config.checkinFrequency == 0;
+          : event.player.world.getTotalWorldTime() % Config.checkinFrequency == 0;
       if (healthChanged || checkInTime) {
         // Calculate health change, save the number if damage was taken.
         float diff = current - playerPrevCurrentHealth;

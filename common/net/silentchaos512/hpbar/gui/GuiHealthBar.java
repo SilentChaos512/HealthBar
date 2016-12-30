@@ -48,7 +48,7 @@ public class GuiHealthBar extends Gui {
     }
 
     // Don't render in creative mode?
-    if (Config.replaceVanillaHealth && mc.thePlayer.capabilities.isCreativeMode) {
+    if (Config.replaceVanillaHealth && mc.player.capabilities.isCreativeMode) {
       return;
     }
 

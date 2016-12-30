@@ -1,3 +1,6 @@
+1.0.5
+Fixed: A server-side crash.
+
 1.0.4
 Added: Config to show last damage taken.
 Fixed: Mod not working at all if not on server-side.
