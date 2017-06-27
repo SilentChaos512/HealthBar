@@ -1,6 +1,6 @@
 [
 {
-  "modid": "HealthBar",
+  "modid": "healthbar",
   "name": "Health Bar",
   "description": "A simple, accurate health bar!",
   "version": "${version}",
