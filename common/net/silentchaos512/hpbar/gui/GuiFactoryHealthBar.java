@@ -1,5 +1,6 @@
 package net.silentchaos512.hpbar.gui;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 import net.minecraft.client.Minecraft;
@@ -29,5 +30,21 @@ public class GuiFactoryHealthBar implements IModGuiFactory {
   public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
 
     return null;
+  }
+
+  @Override
+  public boolean hasConfigGui() {
+
+    return true;
+  }
+
+  @Override
+  public GuiScreen createConfigGui(GuiScreen parentScreen) {
+
+    try {
+      return this.mainConfigGuiClass().getConstructor(GuiScreen.class).newInstance(this);
+    } catch (Exception e) {
+      throw new AbstractMethodError();
+    }
   }
 }

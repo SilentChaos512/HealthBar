@@ -16,18 +16,18 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //    id "net.minecraftforge.gradle.forge" version "2.0.2"
 //}
 
-version = "1.0.5"
+version = "1.0.6"
 group = "net.silentchaos512.hpbar"
-archivesBaseName = "HealthBar-1.11"
+archivesBaseName = "HealthBar-1.12"
 
 minecraft {
-    version = "1.11-13.19.1.2189"
+    version = "1.12-14.21.0.2340"
     runDir = "eclipse"
 
     replace "@VERSION@", project.version
     replaceIn "HealthBar.java"
 
-    mappings = "snapshot_20161122"
+    mappings = "snapshot_20170620"
     useDepAts = true
 }
 
