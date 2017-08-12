@@ -1,6 +1,6 @@
 package net.silentchaos512.hpbar.gui;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.client.Minecraft;
@@ -15,21 +15,9 @@ public class GuiFactoryHealthBar implements IModGuiFactory {
   }
 
   @Override
-  public Class<? extends GuiScreen> mainConfigGuiClass() {
-
-    return GuiConfigHealthBar.class;
-  }
-
-  @Override
   public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
 
-    return null;
-  }
-
-  @Override
-  public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
-
-    return null;
+    return new HashSet<RuntimeOptionCategoryElement>();
   }
 
   @Override
@@ -41,10 +29,6 @@ public class GuiFactoryHealthBar implements IModGuiFactory {
   @Override
   public GuiScreen createConfigGui(GuiScreen parentScreen) {
 
-    try {
-      return this.mainConfigGuiClass().getConstructor(GuiScreen.class).newInstance(this);
-    } catch (Exception e) {
-      throw new AbstractMethodError();
-    }
+    return new GuiConfigHealthBar(parentScreen);
   }
 }
