@@ -28,14 +28,12 @@ public class GuiHealthBar extends Gui {
   private Minecraft mc;
 
   public GuiHealthBar(Minecraft mc) {
-
     super();
     this.mc = mc;
   }
 
   @SubscribeEvent
   public void onRenderGameOverlay(RenderGameOverlayEvent event) {
-
     // Hide vanilla health?
     if (Config.replaceVanillaHealth && event.isCancelable() && event.getType() == ElementType.HEALTH) {
       event.setCanceled(true);
@@ -159,26 +157,27 @@ public class GuiHealthBar extends Gui {
      * FOOD BAR TEST
      */
 
-//    posX = 5;
-//    posY = 5;
-//    scale = 1f;
-//
-//    int currentFood = mc.thePlayer.getFoodStats().getFoodLevel();
-//    int maxFood = 20;
-//    float currentSaturation = mc.thePlayer.getFoodStats().getSaturationLevel();
-//    float maxSaturation = currentFood;
-//
-//    GL11.glPushMatrix();
-//    drawBar(posX, posY, barWidth, barHeight, new Color(1f, 0.5f, 0f), (float) currentFood / maxFood);
-//    drawBar(posX, posY + 3f / 4f * barHeight, barWidth, barHeight / 4f, new Color(1f, 0f, 1f), currentSaturation / maxSaturation);
-//    drawBarFrame(posX, posY, barWidth, barHeight);
-//    FontRenderer fontRender = mc.fontRendererObj;
-//    String test = "%d (%.1f)";
-//    test = String.format(test, currentFood, currentSaturation);
-//    fontRender.drawStringWithShadow(test, posX, posY + barHeight, 0xFFFFFF);
-//    GL11.glPopMatrix();
+/*    posX = 5;
+    posY = 5;
+    scale = 1f;
 
-    //renderFoodBar(event);
+    int currentFood = HealthBar.proxy.getClientPlayer().getFoodStats().getFoodLevel();
+    int maxFood = 20;
+    float currentSaturation = HealthBar.proxy.getClientPlayer().getFoodStats().getSaturationLevel();
+    float maxSaturation = currentFood;
+
+    GL11.glPushMatrix();
+    drawBar(posX, posY, barWidth, barHeight, new Color(1f, 0.5f, 0f), (float) currentFood / maxFood);
+    drawBar(posX, posY + 3f / 4f * barHeight, barWidth, barHeight / 4f, new Color(1f, 0f, 1f), currentSaturation / maxSaturation);
+
+    drawBarFrame(posX, posY, barWidth, barHeight);
+    FontRenderer fontRender = mc.fontRenderer;
+    String test = "%d (%.1f)";
+    test = String.format(test, currentFood, currentSaturation);
+    fontRender.drawStringWithShadow(test, posX, posY + barHeight, 0xFFFFFF);
+    GL11.glPopMatrix();
+
+    renderFoodBar(event);*/
   }
 
   protected void renderFoodBar(RenderGameOverlayEvent event) {
