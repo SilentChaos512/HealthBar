@@ -25,20 +25,18 @@ import net.silentchaos512.hpbar.gui.GuiHealthBar;
 import net.silentchaos512.hpbar.network.MessageHealthUpdate;
 import net.silentchaos512.hpbar.proxy.HealthBarCommonProxy;
 
-//@formatter:off
 @Mod(modid = HealthBar.MOD_ID,
     name = HealthBar.MOD_NAME,
     version = HealthBar.VERSION_NUMBER,
-    guiFactory = "net.silentchaos512.hpbar.gui.GuiFactoryHealthBar",
-    updateJSON = "https://raw.githubusercontent.com/SilentChaos512/HealthBar/master/update.json")
-//@formatter:on
+    guiFactory = "net.silentchaos512.hpbar.gui.GuiFactoryHealthBar")
 public class HealthBar {
 
   public static final String MOD_ID = "healthbar";
   public static final String MOD_NAME = "Health Bar";
-  public static final String VERSION_NUMBER = "@VERSION@";
+  public static final String VERSION_NUMBER = "1.0.8";
+  public static final int BUILD_NUM = 0;
   public static final String CHANNEL_NAME = MOD_ID;
-  public static final String RESOURCE_PREFIX = MOD_ID.toLowerCase();
+  public static final String RESOURCE_PREFIX = MOD_ID.toLowerCase(); //?
 
   public static final float CLIENT_MODE_DELAY = 5000;
 
