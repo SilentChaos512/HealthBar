@@ -1,0 +1,30 @@
+modLoader="javafml"
+loaderVersion="[46,)"
+license="MIT"
+issueTrackerURL="https://github.com/SilentChaos512/HealthBar/issues"
+displayURL="https://www.curseforge.com/minecraft/mc-mods/health-bar"
+logoFile="logo.png"
+#credits="Thanks for this example mod goes to Java"
+authors="SilentChaos512"
+
+[[mods]]
+    modId="healthbar"
+    version="${file.jarVersion}"
+    displayName="Health Bar"
+    updateJSONURL="https://raw.githubusercontent.com/SilentChaos512/HealthBar/1.20.1/update.json"
+    description='''
+    A simple health bar that displays only when you are not at full health.
+    '''
+
+[[dependencies.healthbar]]
+    modId="forge"
+    mandatory=true
+    versionRange="[46,)"
+    ordering="AFTER"
+    side="BOTH"
+[[dependencies.healthbar]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1]"
+    ordering="NONE"
+    side="BOTH"

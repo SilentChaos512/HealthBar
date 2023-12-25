@@ -1,110 +1,268 @@
 buildscript {
     repositories {
-        jcenter()
-        maven {
-            name = 'forge'
-            url = 'http://files.minecraftforge.net/maven'
-        }
-        maven {
-            name = 'gradle'
-            url 'https://plugins.gradle.org/m2/'
-        }
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        mavenCentral()
     }
     dependencies {
-        classpath "net.minecraftforge.gradle:${project.fg_version}"
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '6.+', changing: true
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 
 plugins {
-    id "com.matthewprenger.cursegradle" version "1.0.10"
-    id 'net.ltgt.apt' version '0.10' // for lombok
+    id 'maven-publish'
+    id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
-apply plugin: 'com.matthewprenger.cursegradle'
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'idea'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 repositories {
+    flatDir {
+        name "fileRepo"
+        dirs "repo"
+    }
     mavenLocal()
-    mavenCentral()
-}
-
-dependencies {
 }
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
-    options.compilerArgs = [
-            '-Xlint:deprecation', // deprecation, rawtypes, cast, unchecked, all
-//  '-Xdiags:verbose',
-//  '-Werror'
-    ]
+    options.compilerArgs = ['-Xlint:deprecation']
 }
 
 javadoc {
     failOnError = false
 }
 
-def mod_file = getModFile()
-def short_version = getVersion('VERSION', mod_file)
-version = mc_version + '-' + short_version
-def display_version = short_version
-def build_num = getBuildNumber()
+archivesBaseName = project.archivesBaseName
+def versionInfo = getModVersion()
+System.out.println(versionInfo)
+def version_short = "${versionInfo['version_short']}"
+version = "${versionInfo['version']}"
 
-//if (System.getenv().BUILD_NUMBER) {
-//  version += '.' + System.getenv().BUILD_NUMBER
-//  display_version += '.' + System.getenv().BUILD_NUMBER
-//}
+def gpr_creds = { // Credentials for GitHub Packages, since this is used multiple times
+    username = property('gpr.username')
+    password = property('gpr.token')
+}
 
-sourceCompatibility = targetCompatibility = '1.8'
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
-eclipse.project {
-    buildCommand 'org.eclipse.buildship.core.gradleprojectbuilder'
-    natures 'org.eclipse.buildship.core.gradleprojectnature'
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
 }
 
 minecraft {
-    version = project.forge_mc_version + '-' + project.forge_version
-    runDir = 'run'
-    mappings = project.mcp_mappings
+    mappings channel: 'official', version: mc_version
+    copyIdeResources = true
 
-    replace "BUILD_NUM = 0", "BUILD_NUM = " + build_num
-    replaceIn "HealthBar.java"
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
-    if (project.hasProperty('coreplugin')) {
-        clientJvmArgs += '-Dfml.coreMods.load=' + project.coreplugin
-        serverJvmArgs += '-Dfml.coreMods.load=' + project.coreplugin
-    }
+    runs {
+        client {
+            workingDirectory project.file('run')
+            arg "-mixin.config=${mod_id}.mixins.json".toString()
 
-    if (project.hasProperty('mc_username')) {
-        clientRunArgs += ['--username', project.mc_username]
-        if (project.hasProperty('mc_password')) {
-            clientRunArgs += ['--password', project.mc_password]
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                healthbar {
+                    source sourceSets.main
+                }
+            }
+
+            // For Patchouli Mixins to not crash
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+        }
+
+        server {
+            workingDirectory project.file('run')
+            arg "-mixin.config=${mod_id}.mixins.json".toString()
+
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                healthbar {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', project.mod_id, '--all',
+                    '--existing', file('src/main/resources').toString(),
+                    '--existing', file('src/generated/resources').toString(),
+                    '--output', file('src/generated/resources/')
+
+            mods {
+                healthbar {
+                    source sourceSets.main
+                }
+            }
         }
     }
-    if (project.hasProperty('mc_uuid')) {
-        clientRunArgs += ['--uuid', project.mc_uuid]
+}
+
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url 'https://maven.mcmoddev.com'
+    }
+    maven {
+        url 'https://maven.blamejared.com'
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${project.forge_version}"
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+}
+
+jar {
+    manifest {
+        attributes(["Specification-Title"     : project.name,
+                    "Specification-Vendor"    : "SilentChaos512",
+                    "Specification-Version"   : "1",
+                    "Implementation-Title"    : project.name,
+                    "Implementation-Vendor"   : "SilentChaos512",
+                    "Implementation-Version"  : version_short,
+                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    "MixinConfigs"            : "${mod_id}.mixins.json"])
+    }
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier = 'javadoc'
+    from javadoc.getDestinationDir()
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+curseforge {
+    if (project.hasProperty('cf_project_id') && project.hasProperty('cf_release_type') && project.hasProperty('cf_changelog_filename') &&
+            ((project.cf_release_type == 'alpha') || (project.cf_release_type == 'beta') || (project.cf_release_type == 'release'))) {
+        apiKey = property('curseforge.apiKey')
+        project {
+            id = project.cf_project_id
+            changelog = file(project.cf_changelog_filename)
+            releaseType = project.cf_release_type
+            addGameVersion(project.mc_version)
+            mainArtifact(jar) {
+//                displayName = "$project.description $display_version"
+                relations {
+                }
+            }
+        }
+    }
+}
+
+// GPR/Maven publishing
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/silentchaos512/${project.repoName}")
+            credentials gpr_creds
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+            artifact sourcesJar
+            artifact javadocJar
+        }
+    }
+}
+
+// Version stuff
+
+def getModVersion() {
+    try {
+        return getGitVersion()
+    } catch (Exception ex) {
+        System.out.println("Git version failed, falling back to gradle.properties")
+        return makeVersionMap(project.build_version + '-' + getGitHash())
+    }
+}
+
+def getGitVersion() {
+    // Call git command
+    def outStream = new ByteArrayOutputStream()
+    def result = exec {
+        executable = 'git'
+        args = ['describe', '--long']
+        standardOutput = outStream
     }
 
-    // disable server gui
-    serverRunArgs += 'nogui'
+    def fullVersion = outStream.toString()
+    return makeVersionMap(fullVersion)
+}
 
-    // skip the screen to confirm that you want to load a world with missing registry entries
-    serverJvmArgs += '-Dfml.doNotBackup=true'
-    clientJvmArgs += '-Dfml.doNotBackup=true'
-
-    // skip having to confirm on server
-    serverJvmArgs += '-Dfml.queryResult=confirm'
-
-    //skip jansi warnings in the log
-    serverJvmArgs += '-Dlog4j.skipJansi=true'
-    clientJvmArgs += '-Dlog4j.skipJansi=true'
-
-    if (project.hasProperty('client_args')) {
-        clientJvmArgs += project.client_args
+def getGitHash() {
+    def outStream = new ByteArrayOutputStream()
+    def result = exec {
+        executable = 'git'
+        args = ['rev-parse', 'HEAD']
+        standardOutput = outStream
     }
-    if (project.hasProperty('server_args')) {
-        serverJvmArgs += project.server_args
+
+    return outStream.toString().trim().substring(0, 6)
+}
+
+def makeVersionMap(version) {
+    def matcher = version.trim() =~ /(\d+).(\d+).(\d+)-(.*)/
+
+    def maj = matcher[0][1]
+    def min = matcher[0][2]
+    def rev = matcher[0][3]
+    def bn = getBuildNumber()
+
+    return makeVersionMap(maj, min, rev, bn, matcher[0][4])
+}
+
+def makeVersionMap(maj, min, rev, bn, githash) {
+    def out = [:]
+    out['build.major.number'] = maj.toString()
+    out['build.minor.number'] = min.toString()
+    out['build.revision.number'] = rev.toString()
+    out['build.githash'] = githash
+    out['build.number'] = bn.toString()
+    out['version_short'] = "${maj}.${min}.${rev}".toString()
+    out['version'] = "${project.mc_version}-${maj}.${min}.${rev}".toString()
+    return out
+}
+
+// Build number tracking
+
+String getBuildNumber() {
+    def versionFile = file('version.properties')
+    if (versionFile.canRead()) {
+        Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionFile))
+        return versionProps['build_num'].toString()
     }
+    return "1"
 }
 
 task incrementBuild {
@@ -113,192 +271,43 @@ task incrementBuild {
         if (versionFile.canRead()) {
             Properties versionProps = new Properties()
             versionProps.load(new FileInputStream(versionFile))
-            build_num = versionProps['build_num'].toInteger() + 1
-            println("incrementing BuildNumber to: " + build_num)
-            versionProps['build_num'] = build_num.toString()
+            def num = versionProps['build_num'].toInteger() + 1
+            println("incrementing BuildNumber to: " + num)
+            versionProps['build_num'] = num.toString()
             versionProps.store(versionFile.newWriter(), null)
         } else {
             println("version.properties file not found! Ignoring.")
         }
     }
 }
-build.dependsOn incrementBuild
+build.finalizedBy incrementBuild // only increment on successful builds
 
-repositories {
-}
+// Update JSON management
 
-dependencies {
-}
-
-processResources {
-    inputs.property 'version', project.version
-    inputs.property 'mcversion', project.minecraft.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-        expand 'version': short_version, 'mcversion': project.minecraft.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-
-    rename '(.+_at.cfg)', 'META-INF/$1'
-}
-
-jar {
-    build_num = getBuildNumber()
-    if (build_num > 0) {
-        classifier = build_num
-    }
-    manifest {
-        if (project.hasProperty('coreplugin')) {
-            attributes 'FMLCorePluginContainsFMLMod': 'true'
-            attributes 'FMLCorePlugin': project.coreplugin
-        }
-//  attributes 'FMLAT' : ''
-    }
-}
-
-task apiJar(type: Jar) {
-    classifier = 'apiClasses'
-    from apiClasses
-}
-
-task deobfJar(type: Jar) {
-    classifier = 'deobf'
-    from sourceSets.main.output
-}
-
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.getDestinationDir()
-}
-
-artifacts {
-    if (project.hasProperty('doAPIJar')) {
-        archives apiJar
-    }
-    if (project.hasProperty('doDeobfJar')) {
-        archives deobfJar
-    }
-    if (project.hasProperty('doSourceJar')) {
-        archives sourceJar
-    }
-    if (project.hasProperty('doJavadocJar')) {
-        archives javadocJar
-    }
-}
-
-class Secrets {
-    def data = null
-
-    def getProperty(String key) {
-        return data ? data[key] : ''
-    }
-}
-
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
-def secretFile
-if (System.getenv().SECRET_FILE) {
-    secretFile = file System.getenv().SECRET_FILE
-} else {
-    secretFile = file 'secret.json'
+def writeUpdateJson() {
+    def version = getModVersion()['version_short']
+    def slurper = new JsonSlurper()
+    def file = new File('update.json')
+    def json = slurper.parse(file)
+
+    // TODO: Maybe add something to create an abbreviated changelog? May not be useful...
+    if (!json[project.mc_version].containsKey(version.toString()))
+        json[project.mc_version][version.toString()] = 'https://github.com/SilentChaos512/HealthBar/blob/1.20.1/CHANGELOG.md'
+    json[project.mc_version] = json[project.mc_version].sort([compare: { a, b -> b.compareTo(a) }] as Comparator)
+    json['promos']["${project.mc_version}-latest"] = version
+    json['promos']["${project.mc_version}-recommended"] = version
+
+    println(json)
+    file.write(JsonOutput.prettyPrint(JsonOutput.toJson(json)))
 }
 
-project.ext.secret = new Secrets()
-if (secretFile.exists()) {
-    secretFile.withReader {
-        project.ext.secret.data = new JsonSlurper().parse it
+task createUpdateJson {
+    doLast {
+        println('Updating update.json...')
+        writeUpdateJson()
     }
 }
-
-curseforge {
-    if (project.hasProperty('cf_project_id') && project.hasProperty('cf_release_type') && project.hasProperty('cf_changelog_filename') &&
-            ((project.cf_release_type == 'alpha') || (project.cf_release_type == 'beta') || (project.cf_release_type == 'release'))) {
-        apiKey = secret.curseforgeAPIKey
-        project {
-            id = project.cf_project_id
-            //changelog = file(project.cf_changelog_filename)
-            releaseType = project.cf_release_type
-            addGameVersion(project.mc_version)
-//            mainArtifact(jar) {
-//                displayName = "$project.description $display_version"
-//                relations {
-//                }
-//            }
-//            if (project.hasProperty('doAPIJar')) {
-//                addArtifact(apiJar) {
-//                    displayName = "$project.description $display_version API"
-//                }
-//            }
-//            if (project.hasProperty('doSourceJar')) {
-//                addArtifact(sourceJar) {
-//                    displayName = "$project.description $display_version Sources"
-//                }
-//            }
-//            if (project.hasProperty('doDeobfJar')) {
-//                addArtifact(deobfJar) {
-//                    displayName = "$project.description $display_version Development"
-//                }
-//            }
-//            if (project.hasProperty('doJavadocJar')) {
-//                addArtifact(javadocJar) {
-//                    displayName = "$project.description $display_version Javadoc"
-//                }
-//            }
-        }
-    }
-}
-
-String getModFile() {
-    String path = ''
-    FileTree tree = fileTree(dir: 'src/main/java')
-    tree.include '**/*.java'
-    tree.visit { element ->
-        if (element.file.isFile()) {
-            element.file.eachLine { String s ->
-                s = s.trim()
-                if (s.startsWith('@Mod(')) {
-                    path = "src/main/java/$element.relativePath"
-                }
-            }
-        }
-    }
-    return path
-}
-
-String getVersion(String type, String mod_file) {
-    String major = '0'
-    String revision = '0'
-    String patch = '0'
-    File file = file(mod_file)
-    def prefix = ~/^(?:public|protected|private) static final String $type = ".*$/
-    file.eachLine { String s ->
-        s = s.trim()
-        if (s ==~ prefix || prefix.matcher(s).matches()) {
-            String[] bits = s.split("=")
-            String interesting = bits[1].trim()
-            interesting = interesting.substring(1, interesting.length() - 2)
-            String[] pts = interesting.trim().split("\\.")
-
-            major = pts[0] ?: '0'
-            revision = pts[1] ?: '0'
-            patch = pts[2] ?: '0'
-        }
-    }
-    return "$major.$revision.$patch"
-}
-
-int getBuildNumber() {
-    def versionFile = file('version.properties')
-    if (versionFile.canRead()) {
-        Properties versionProps = new Properties()
-        versionProps.load(new FileInputStream(versionFile))
-        return versionProps['build_num'].toInteger()
-    } else {
-        println('version.properties file not found! Build number will be 0')
-        return 0
-    }
-}
+//build.finalizedBy createUpdateJson
